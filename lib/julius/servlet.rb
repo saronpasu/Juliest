@@ -50,7 +50,6 @@ class Julius::Servlet
       base_path ||= @config[:base_path]
       base_path ||= 'aquestalk2'
       @base_path = base_path
-      player ||= @config[:player]
       @status ||= :running
     end
   end
