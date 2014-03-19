@@ -9,7 +9,8 @@
 * このリポジトリには julius は含まれていません。
     * install_julius.sh を実行し、 Julius を導入して下さい。
 * このリポジトリには AquesTalk2 は含まれていません。
-    * [アクエスト社サイト](http://www.a-quest.com/products/aquestalk.html) より、AquesTalk2 Linux評価版 をお買い求め下さい。
+    * [アクエスト社サイト](http://www.a-quest.com/products/aquestalk.html) より、AquesTalk2 Linux評価版 をダウンロードするか。
+    * 同社より、開発版ライセンスをお買い求め下さい。
 * このリポジトリには MPlayer は含まれていません。
     * apt-get install mplayer などで導入して下さい。
 * Ubuntu でマイク入力する際に、音が小さく、ノイズが多くてうまく認識されないことがあります。
