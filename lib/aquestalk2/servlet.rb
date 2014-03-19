@@ -53,7 +53,7 @@ class AquesTalk2::Servlet
       base_path ||= @config[:base_path]
       base_path ||= 'aquestalk2'
       @base_path = base_path
-      player ||= @config[:
+      player ||= @config[:mplayer]
       @aquestalk2 = AquesTalk2.new
       @status ||= :running
     end
