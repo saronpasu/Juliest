@@ -61,10 +61,10 @@
 
 ## ドキュメント
 
-* 開発者向けのドキュメントは [こちら](../Juliest/master/doc/DEVELOPMENT.md) をご覧ください。
-* 導入方法についてのドキュメントは [こちら](../Juliest/master/doc/INSTALL.md) をご覧ください。
-* 利用方法についてのドキュメントは [こちら](../Juliest/master/doc/HOUTOUSE.md) をご覧ください。
-* 開発状況(TODO) については [こちら](../Juliest/master/doc/TODO.md) をご覧ください。
+* 開発者向けのドキュメントは [こちら](/doc/DEVELOPMENT.md) をご覧ください。
+* 導入方法についてのドキュメントは [こちら](/doc/INSTALL.md) をご覧ください。
+* 利用方法についてのドキュメントは [こちら](/doc/HOUTOUSE.md) をご覧ください。
+* 開発状況(TODO) については [こちら](/doc/TODO.md) をご覧ください。
 
 
 以上です。
