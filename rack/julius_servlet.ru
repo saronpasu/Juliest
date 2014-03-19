@@ -19,7 +19,7 @@ require 'julius'
 
 def post_julius(message)
   julius = nil
-  open(CONFIG_FILE, 'r'){|f|julius = YAML::load(f.read)[:julius]}
+  open('config.yaml', 'r'){|f|julius = YAML::load(f.read)[:julius]}
 
   host = '127.0.0.1'
   base_path = julius[:base_path]
@@ -46,6 +46,10 @@ def put_julius(status)
     http.put(request)
   }
 end
+
+julius_module_command = 'julius/bin/julius -C julius/main.jconf -C julius/am-dnn.jconf -input mic -module &'
+
+`#{julius_module_command}`
 
 julius = Julius.new
 julius.each_message do |message, prompt|

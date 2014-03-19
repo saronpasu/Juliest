@@ -20,9 +20,8 @@ class AquesTalk2::Servlet
   
   
   class Base
-    include AquesTalk2
     autoload :Logger, 'logger'
-    CONFIG_FILE = 'config/config.yaml'
+    CONFIG_FILE = 'config.yaml'
     LOG_DIR = 'log'
     SOUND_RESOURCE_DIR = 'resource/voice'
     

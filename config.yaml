@@ -1,0 +1,33 @@
+---
+:julius:
+  :port:
+    # ポート番号を指定
+    9292
+  :base_path:
+    # ベースパスを指定
+    'julius'
+
+:juliest:
+  :port:
+    # ポート番号を指定
+    9292
+  :base_path:
+    # ベースパスを指定
+   'juliest'
+
+:aquestalk2:
+  :port:
+    # ポート番号を指定
+    9292
+  :base_path:
+    # ベースパスを指定
+    'aquestalk'
+  :player:
+    # 使用するCUI 音楽プレイヤーを指定
+    'mplayer'
+
+:persona:
+  :use:
+    # 使用するペルソナを指定
+    :est
+
