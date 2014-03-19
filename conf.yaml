@@ -1,0 +1,24 @@
+---
+:julius
+  # ポート番号を指定
+  :port 9292
+  # ベースパスを指定
+  :base_path 'julius'
+
+:juliest
+  # ポート番号を指定
+  :port 9292
+  # ベースパスを指定
+  :base_path 'juliest'
+
+:aquestalk2
+  # ポート番号を指定
+  :port 9292
+  # ベースパスを指定
+  :base_path 'aquestalk'
+  :player 'mplayer'
+
+:persona
+  # 仮想人格エージェントを指定
+  :use :est
+
