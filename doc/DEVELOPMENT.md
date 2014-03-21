@@ -56,6 +56,8 @@
     * 初期設定ファイル
 * install_julius.sh
     * Julius インストールスクリプト
+* startup_servlet.sh
+    * サーブレットの一括起動スクリプト
 * log
     * ログディレクトリ
 * data

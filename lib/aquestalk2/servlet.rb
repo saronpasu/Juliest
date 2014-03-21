@@ -1,9 +1,14 @@
 #-*- encoding: utf-8 -*-
 
+
 class AquesTalk2::Servlet
   autoload :AquesTalk2, 'aquestalk2'
   autoload :YAML, 'yaml'
   autoload :FileUtils, 'fileutils'
+
+  require 'uri'
+  require 'net/http'
+
   
   class VERSION
     MAJOR = 0
@@ -18,7 +23,7 @@ class AquesTalk2::Servlet
     end
   end
   
-  
+  # サーブレットのベースクラス
   class Base
     autoload :Logger, 'logger'
     CONFIG_FILE = 'config.yaml'
@@ -36,6 +41,7 @@ class AquesTalk2::Servlet
     
     def initialize
       open(CONFIG_FILE, 'r'){|f|@config = YAML::load(f.read)[:aquestalk2]}
+      # ログ出力設定の初期化
       if FileTest.exist?(LOG_DIR) then
         file = LOG_DIR+'/aquestalk2_servlet.log'
         shift_age = 7
@@ -46,18 +52,24 @@ class AquesTalk2::Servlet
         @log = Logger.new(STDERR)
         @log.level = Logger::ERROR
       end
+      # サーブレットのポート設定
       port ||= @config[:port]
       port ||= 9292
       @port = port
+      # サーブレットのパス設定
       base_path ||= @config[:base_path]
       base_path ||= 'aquestalk2'
       @base_path = base_path
+      # CUI 音楽プレイヤーの設定
       player ||= @config[:mplayer]
+      # AquesTalk2 インスタンスの生成
       @aquestalk2 = AquesTalk2.new
+      # サーブレットのステータス設定
       @status ||= :running
     end
   end
 
+  # AquesTalk2 の実行
   def synthe(input)
     @status = :synthe
 
@@ -70,6 +82,7 @@ class AquesTalk2::Servlet
     return output
   end
 
+  # CUI音楽プレイヤーで再生
   def play_sound(input)
     @status = :play_sound
 
@@ -82,38 +95,72 @@ class AquesTalk2::Servlet
 
     @status = :runnning
   end
+
+  # Julius サーブレットへのステータス変更信号の送信
+  def put_sttus_to_julius(status)
+    julius = nil
+    open(CONFIG_FILE, 'r'){|f|julius = YAML::load(f.read)[:julius]}
+
+    host = '127.0.0.1'
+    base_path = julius[:base_path]
+    port = julius[:port]
+    request_uri = URI.parse('http://'+host+'/'+base_path)
+    request = Net::HTTP::Put.new(uri.request_uri)
+    request.body= status
+    response = Net::HTTP.start(host, port){|http|
+      http.put(request)
+    }
+  end
   
+  # サーブレットクラス
   class App < Base
     require 'rack'
     require 'msgpack'
     
     def call(env)
       request = Rack::Request.new(env)
-      request_report = request_scan(request)
 
+      # レスポンスの初期化
       status = 200
       header = {}
       body = []
       result = nil
       
+      # サーブレットのパス以外へのアクセスは弾く
       unless request.path.match(@base_path)
-        status 404
+        status = 404
         body<< 'bad request'.to_msgpack
       end
       
       case request.method
+        # GETメソッドの場合、サーブレットのステータスを返す
         when 'GET'
           body<< @status.to_msgpack
+
+        # PUT メソッドの場合、サーブレットのステータスを変更する
         when 'PUT'
           @status = MessagePack.unpack(request.body)
-        when 'POST', (@status != :silent)
+          body<< true.to_msgpack
+
+        # POST メソッドの場合、かつ。 サーブレットのステータスがサイレントモードの場合は
+        # POST メソッドによる命令実行は行わない。
+        when 'POST', @status.eql?(:silent)
+          @status = 503
+          body<< @status.to_unpack
+
+        # POST メソッドの場合、 Aqestalk2による音声合成と、CUI音楽プレイヤーによる再生を実行
+        when 'POST'
+          
+          put_status_to_julius(:silent)
           input = request.body
           voice = synthe(input)
           play_sound(voice)
+          put_status_to_julius(:running)
+          
           body<< true.to_msgpack
       end
       
-      # finish
+      # レスポンスを返す
       header = Rack::Utils::HeaderHash.new(header)
       res = Rack::Response.new(body, status, header)
       res.finish
