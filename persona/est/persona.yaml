@@ -1,0 +1,31 @@
+---
+:persona:
+  # 仮想人格の名前(英数表示)
+  :name:
+    'est'
+  # 仮想人格のバージョン(Major,Minor,Tiny 文字表示)
+  :version:
+    '0.0.1'
+  # 仮想人格の製作者(ハンドルネームOK)
+  :creator:
+    'saronpasu'
+  # 製作者への連絡先(Twitter,ブログ、メールアドレス等)
+  :contact:
+    'jamneco @ gmail dot com'
+  # 仮想人格のライセンス(クリエイティブコモンズ推奨)
+  :license:
+    'cc-by-sa-3.0'
+  # 仮想人格の著作権(２次創作の場合などはここに記載)
+  :copylight:
+    'saronpasu'
+  # 仮想人格の概要(できれば１行でまとまる範囲で。)
+  :about:
+    'デフォルトの仮想人格です。'
+  # 対応しているプラグイン（複数記載)
+  :support_plugins:
+    - 'ask_aboutme'
+    - 'ask_date'
+    - 'ask_time'
+    - 'ask_weekday'
+    - 'random_talk'
+
