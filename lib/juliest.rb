@@ -3,12 +3,69 @@ require 'msgpack'
 
 class Juliest
   attr_accessor(
+    # Juliest サーブレットモード
     :mode,
-    :personas,
-    :plugins
+    # Juliest 読み込み済み仮想人格リスト
+    :persona,
+    # 活性化している仮想人格
+    :active_persona,
+    # Juliest 読み込み済みプラグインリスト
+    :plugins,
+    # AqeusTalk2 サーブレットへの通信待機時間(秒)
+    :aquestalk2_wait_sec,
+    # 設定データ
+    :config,
+    # ユーザデータ
+    :user_data
   )
+  
+  # 初期設定:AquesTalk2 サーブレットへの応答待機時間(秒)
+  DEFAULT_AQUESTALK2_WAIT_SEC = 2
+  # 初期設定:活性化している仮想人格
+  DEFAULT_ACTIVATE_PERSONA = 'est'
+  # 初期設定:設定ファイルのパス
+  # DEFAULT_USER_DATA_PATH = '~/.juliest/config.yaml'
+  DEFAULT_CONFIG_PATH = './config.yaml'
+  # 初期設定：ユーザデータのパス
+  # DEFAULT_USER_DATA_PATH = '~/.juliest/data/user_data.yaml'
+  DEFAULT_USER_DATA_PATH = './data/user_data.yaml'
 
-  def initialize
+  # プラグインのパス
+  PLUGINS_PATH = './plugins/'
+  # 仮想人格のパス
+  PERSONA_PATH = './persona/'
+  
+  # config.yaml のロード
+  def load_config
+  end
+
+  # data/user_data.yaml のロード
+  def load_user_data
+  end
+
+  # 仮想人格リストのロード
+  def load_persona
+  end
+
+  # プラグインリストのロード
+  def load_plugins
+  end
+
+  # 初期化処理
+  def initialize(
+    activate_persona = nil,
+    config = nil,
+    user_data = nil
+  )
+    config ||= DEFAULT_CONFIG_PATH
+    user_data ||= DEFAULT_USER_DATA_PATH
+    activate_persona ||= DEFAULT_ACTIVATE_PERSONA
+    @config = load_config(config)
+    @user_data ||= load_user_data(user_data)
+    @aquestalk2_wait_sec ||= DEFAULT_AQUESTALK2_WAIT_SEC
+    @persona ||= load_persona
+    @plugins ||= load_plugins
+    @activate_persona ||= activate_persona
   end
 
   # モード変更用のパーサ生成
@@ -53,7 +110,8 @@ class Juliest
     
     command = nil
     argments = nil
-    
+    messages = nil
+
     # モードによる処理分岐
     case @mode
       # サイレントモード時にはモード切替のみ受信
@@ -79,8 +137,19 @@ class Juliest
         execute_plugin_command
       else
         # コマンドが認識できなかった場合、メッセージ再生のみを行う
-        generate_persona_message
-        play_voice
+        source = [
+          ":__prefix_ask_to__",
+          ":__ask_to__",
+          ":__suffix_ask_to__",
+          ":__prefix_re_input__",
+          ":__re_input__",
+          ":__suffix_re_input__"
+        ]
+        messages = generate_persona_messages(source)
+        messages.compact.uniq!
+        messages.each do |message|
+          play_voice(message)
+        end
       end
     end
     
@@ -90,12 +159,15 @@ class Juliest
   def execute_plugin_command
   end
 
-  # 仮想人格のメッセージ生成
-  def generate_persona_message
+  # 仮想人格のメッセージ生成(array to array)
+  def generate_persona_messages(source)
+    
   end
 
   # 音声再生
-  def play_voice
+  def play_voice(message, wait_sec = nil)
+    # AquesTalk2 サーブレットのステータスを確認
+    # 無応答または、 :running 以外の場合は待機してリトライ。 Kernel#sleep(sec) を使用する。
   end
 
 end

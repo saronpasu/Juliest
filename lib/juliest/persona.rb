@@ -22,11 +22,17 @@ class Julius::Persona::Base
     # コピーライト(著作権表示)
     :copylight,
     # 対応プラグイン(Array)
-    :support_pluigns
+    :support_pluigns,
+    # 登録単語リスト
+    :word
   )
 
   # 初期化
   def initialize
+  end
+
+  # 単語リストの読み込み
+  def load_word
   end
 
   # 仮想人格の読み込み
@@ -51,7 +57,7 @@ class Julius::Persona < Julius::Persona::Base
   end
 
   # メッセージ生成
-  def generate_message
+  def generate_message(source)
   end
 
   # メッセージ送信
