@@ -6,6 +6,8 @@ class Julius::Persorna::PersonaError < StandardError; end
 # ベースクラス
 class Julius::Persona::Base
 
+  PERSONA_PATH = './persona/'
+
   attr_accessor(
     # 仮想人格のバージョン
     :version,
@@ -28,15 +30,30 @@ class Julius::Persona::Base
   )
 
   # 初期化
-  def initialize
+  def initialize(persona)
+    persona = load_persona(persona)
+    @version = persona[:version]
+    @name = persona[:name]
+    @creator = persona[:creator]
+    @contact = persona[:contact]
+    @about = persona[:about]
+    @copylight = perosna[:copylight]
+    @support_plugins = persona[:support_plugins]
+    @word = load_word(persona)
   end
 
   # 単語リストの読み込み
-  def load_word
+  def load_word(persona)
+    result = nil
+    open(PERSONA_PATH+persona+'/word.yaml', 'r'){|f|result = YAML::load(f.read)}
+    return result
   end
 
   # 仮想人格の読み込み
-  def load_persona
+  def load_persona(persona)
+    result = nil
+    open(PERSONA_PATH+persona+'/persona.yaml', 'r'){|f|result = YAML::load(f.read)[:persona]}
+    return result
   end
   
 end
@@ -44,16 +61,8 @@ end
 # 仮想人格クラス
 class Julius::Persona < Julius::Persona::Base
 
-  # 活性化
-  def activate_persona
-  end
-
-  # 非活性化
-  def deactivate_persona
-  end
-
-  # 切り替え
-  def change_persona
+  # 名前一致パーサ生成
+  def generate_name_parser
   end
 
   # メッセージ生成
@@ -69,11 +78,11 @@ class Julius::Persona < Julius::Persona::Base
   end
 
   # ランダム選択(有限長Array)
-  def rand_choice
+  def rand_choice(word)
   end
 
   # ランダム選択が必要かどうか
-  def is_choice?
+  def is_choice?(word)
   end
 
 end
