@@ -50,6 +50,7 @@ module LibAqKanji2Koe
   # dlload LIB_PATH+'/libAqKanji2KoeEva.so.2.0'
 
   # AquesKanji2Koe 開発用(linux)
+  # このリポジトリにはライブラリは含まれません
    dlload LIB_PATH+'/libAqKanji2Koe.so.2.0'
 
 
@@ -73,7 +74,10 @@ class AqKanji2Koe
   include LibAqKanji2Koe
 
   # 辞書ファイルのパス
-  DICT_PATH            = 'dict/aq_dic_large'
+  # 辞書ファイルは AqKanji2Koe に含まれます
+# DICT_PATH            = 'dict/aq_dic'       # 評価版の場合
+  DICT_PATH            = 'dict/aq_dic_large' # 開発版の場合
+
   # 音声記号ファイルのファイルサイズ倍率指定
   OUTPUT_MAGNIFICATION =                   7
   

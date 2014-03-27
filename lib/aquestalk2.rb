@@ -4,6 +4,16 @@
 #$LOAD_PATH << File.dirname(__FILE__)
 
 =begin
+  AquesTalk2 ラッパーライブラリ
+  phont ファイル指定には未対応です。
+
+  Usage:
+    require 'aquestalk2'
+    
+    aqtk2 = AquesTalk2.new
+    source = 'こんにちわ'
+    output = 'output.wav'
+    aqtk2.synthe(source, output)
 
 =end
 
