@@ -23,22 +23,27 @@ class Juliest::Plugin::Base
 
   # このプラグインはペルソナによる対応が必須であるか
   def require_persona_support?
+    @requirement[:persona_support]
   end
 
   # このプラグインは引数の要求を必要とするか
   def require_arguments?
+    @requirement[:arguments]
   end
 
   # このプラグインは確認メッセージを必要とするか
   def require_confirm?
+    @requirement[:confirm]
   end
 
   # このプラグインは待機メッセージを必要とするか
   def require_wait?
+   @requirement[:wait]
   end
 
   # このプラグインはネイティブコマンドを必要とするか
   def require_native_command?
+   @requirement[:native_command]
   end
 
   # エラーメッセージの生成
@@ -61,6 +66,9 @@ class Juliest::Plugin::Base
   def generate_wait_message
   end
 
+  # 継承したクラスで実装して下さい
+  def call(args = nil)
+  end
 end
 
 # プラグイン管理クラス
@@ -73,15 +81,18 @@ class Juliest::PluginManager
   end
 
   # プラグインの読み込み
-  def load_plugin
+  def load_plugin(plugin)
+    
   end
 
   # プラグインを一覧へ追加
-  def add_plugin
+  def add_plugin(plugin)
+    
   end
 
   # プラグインを一覧から削除
-  def remove_plugin
+  def remove_plugin(plugin)
+    
   end
 
   # プラグインがペルソナにサポートされているかどうか

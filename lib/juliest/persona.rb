@@ -1,5 +1,4 @@
 require 'julius'
-require 'aqkanji2koe'
 
 # エラークラス
 class Julius::Persorna::PersonaError < StandardError; end
@@ -76,6 +75,9 @@ class Julius::Persona < Julius::Persona::Base
   def generate_message(source)
     result = source
     @word[:word].each do |pattern, message|
+      if message.is_a? Array then
+        message = rand_choice(message)
+      end
       result.gsub!(pattern, message)
     end
     return result

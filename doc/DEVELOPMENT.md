@@ -8,7 +8,7 @@
 ## 開発メモ
 * このリポジトリには julius は含まれていません。
     * install_julius.sh を実行し、 Julius を導入して下さい。
-* このリポジトリには AquesTalk2 は含まれていません。
+* このリポジトリには AquesTalk2 AqKanji2Koe ライブラリ は含まれていません。
     * [アクエスト社サイト](http://www.a-quest.com/products/aquestalk.html) より、AquesTalk2 Linux評価版 をダウンロードするか。
     * 同社より、開発版ライセンスをお買い求め下さい。
 * このリポジトリには MPlayer は含まれていません。
@@ -22,6 +22,7 @@
 ## 依存しているミドルウェア/ライブラリ
 * Julius 音声認識エンジン
 * AquesTalk2 音声合成ライブラリ
+* AqKanji2Koe 漢字含むテキストの音声記号変換ライブラリ
 * Rack Webサーブレット
 * MessagePack ライブラリ
 * Julius ラッパーライブラリ
