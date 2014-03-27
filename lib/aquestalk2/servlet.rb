@@ -3,6 +3,7 @@
 
 class AquesTalk2::Servlet
   autoload :AquesTalk2, 'aquestalk2'
+  autoload :AqKanji2Koe, 'aqkanji2koe'
   autoload :YAML, 'yaml'
   autoload :FileUtils, 'fileutils'
 
@@ -32,6 +33,7 @@ class AquesTalk2::Servlet
     
     attr_accessor :config,
       :aquestalk2,
+      :aqkanji2koe,
       :base_path,
       :player,
       :player_args,
@@ -64,6 +66,8 @@ class AquesTalk2::Servlet
       player ||= @config[:mplayer]
       # AquesTalk2 インスタンスの生成
       @aquestalk2 = AquesTalk2.new
+      # AqKanji2Koe インスタンスの生成
+      @aqkanji2koe = AqKanji2Koe.new
       # サーブレットのステータス設定
       @status ||= :running
     end
@@ -75,6 +79,7 @@ class AquesTalk2::Servlet
 
     source = MessagePack.unpack(input)
     uid = source.object_id
+    source = @aqkanji2koe.convert(source)
     output = SOUND_RESOURCE_DIR+'/output-'+uid+'.wav'
     @aquestalk2.synthe(source, output)
 

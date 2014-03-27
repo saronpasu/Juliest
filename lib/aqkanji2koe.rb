@@ -4,6 +4,15 @@
 #$LOAD_PATH << File.dirname(__FILE__)
 
 =begin
+  AqKanji2Koe ラッパーライブラリ
+  漢字を含む文字列から、AquesTalk2音声記号文字列へ変換して返す。
+
+  Usage
+    require 'aqkanji2koe'
+
+    k2k = AqKanji2Koe.new
+    source = "いい天気ですね。"
+    koe = k2k.convert(source)
 
 =end
 
@@ -67,8 +76,6 @@ class AqKanji2Koe
   DICT_PATH            = 'dict/aq_dic_large'
   # 音声記号ファイルのファイルサイズ倍率指定
   OUTPUT_MAGNIFICATION =                   7
-  # 出力ファイル名の初期値
-  DEFAULT_OUTPUT       =         'output.txt'
   
   # 辞書ファイルパスアクセサ
   attr_accessor :dict_path
@@ -92,6 +99,8 @@ class AqKanji2Koe
     dict_path ||= @dict_path
     handler     = nil
     null_ptr    = nil
+
+    # Ruby バージョンで分岐
     case
       when RUBY_VERSION.match(/1\.9/), RUBY_VERSION.match(/1\.8\.7/)
         null_ptr = DL::CPtr[0]
@@ -123,22 +132,15 @@ class AqKanji2Koe
       return false
     end
     
+    # ハンドラが生成されていない場合は生成する
     if @handler.nil? then
       create
     end
 
     input.chomp!
-    output               ||= DEFAULT_OUTPUT
     output_magnitication ||= @output_magnitication
     handler              ||= @handler
 
-    null_ptr = nil
-    case
-      when RUBY_VERSION.match(/1\.9/), RUBY_VERSION.match(/1\.8\.7/)
-        null_ptr = DL::CPtr[0]
-      when RUBY_VERSION.match(/2\.\d/)
-        null_ptr = Fiddle::Pointer[0]
-    end
     # 最低256バイト以上になるように、入力元バイトサイズの数倍を確保
     n_buf_koe = input.bytesize * 256 * output_magnitication
     # 漢字含む入力領域を確保
@@ -160,12 +162,14 @@ class AqKanji2Koe
       return false
     end
 
-    koe = koe
-    open(output, 'w+b'){|f|f.print(koe)}
-
-
     release(handler)
-    return true
+
+    unless output then
+      open(output, 'w+b'){|f|f.print(koe)}
+      return true
+    else
+      return koe
+    end
   end
   
   # メモリ解放を行う処理のラッパーメソッド

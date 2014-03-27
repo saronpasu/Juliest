@@ -1,4 +1,5 @@
 require 'julius'
+require 'aqkanji2koe'
 
 # エラークラス
 class Julius::Persorna::PersonaError < StandardError; end
@@ -26,7 +27,9 @@ class Julius::Persona::Base
     # 対応プラグイン(Array)
     :support_pluigns,
     # 登録単語リスト
-    :word
+    :word,
+    # AqKanji2Koe インスタンス
+    :aqk2k
   )
 
   # 初期化
@@ -40,6 +43,7 @@ class Julius::Persona::Base
     @copylight = perosna[:copylight]
     @support_plugins = persona[:support_plugins]
     @word = load_word(persona)
+    @aqk2k = AqKanji2Koe.new
   end
 
   # 単語リストの読み込み
@@ -63,10 +67,18 @@ class Julius::Persona < Julius::Persona::Base
 
   # 名前一致パーサ生成
   def generate_name_parser
+    source = '/('+@word[:persona_name].join('|')+')/'
+    reg = Regexp.new(source)
+    return reg
   end
 
   # メッセージ生成
   def generate_message(source)
+    result = source
+    @word[:word].each do |pattern, message|
+      result.gsub!(pattern, message)
+    end
+    return result
   end
 
   # メッセージ送信
@@ -79,6 +91,17 @@ class Julius::Persona < Julius::Persona::Base
 
   # ランダム選択(有限長Array)
   def rand_choice(word)
+    result = nil
+    
+    # RUBY バージョンで分岐
+    case RUBY_VERSION
+      when /1\.\d/
+        result = word[rand(word.size)]
+      when /2\.\d/
+        result = word.sample
+    end
+    
+    return result
   end
 
   # ランダム選択が必要かどうか
