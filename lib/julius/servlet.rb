@@ -51,7 +51,8 @@ class Julius::Servlet
       @port = port
       # パスの設定
       base_path ||= @config[:base_path]
-      base_path ||= 'aquestalk2'
+      base_path ||= 'julius'
+      @juliest ||= @config[:juliest]
       @base_path = base_path
       # サーブレットのステータスの設定
       @status ||= :running

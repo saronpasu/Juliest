@@ -14,11 +14,17 @@ class Juliest::Plugin::Base
     # ライセンス
     :license,
     # 依存ライブラリ、ミドルウェア、ネイティブコマンド等
-    :requirement
+    :requirement,
+    # ユーザデータ(Juliestより受け取る)
+    :user_data,
+    # 仮想人格データ(Juliestより受け取る)
+    :activate_persona
   )
 
   # 初期化
-  def initialize
+  def initialize(user_data, activate_persona)
+    @user_data = user_data
+    @activate_persona = activate_persona
   end
 
   # このプラグインはペルソナによる対応が必須であるか

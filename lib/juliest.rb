@@ -45,10 +45,22 @@ class Juliest
 
   # 仮想人格リストのロード
   def load_persona
+    list = @config[:persona]
+    result = Array.allocate
+    list.each do |persona|
+      # 仮想人格の個別ロード
+    end
+    return result
   end
 
   # プラグインリストのロード
   def load_plugins
+    list = @config[:plugins]
+    result = Array.allocate
+    list.each do |plugin|
+      # プラグインの個別ロード
+    end
+    return result
   end
 
   # 初期化処理
@@ -168,6 +180,34 @@ class Juliest
   def play_voice(message, wait_sec = nil)
     # AquesTalk2 サーブレットのステータスを確認
     # 無応答または、 :running 以外の場合は待機してリトライ。 Kernel#sleep(sec) を使用する。
+  end
+
+
+  # POST 呼び出しを受けた際の処理
+  def main(message)
+    
+    case message
+      # 対話モード時の引数受取(優先度0）
+      when
+
+      # モード変更コマンド(優先度1)
+      when
+
+      # プラグインコマンド(優先度2)
+      when
+
+      # 名前呼び出し(優先度3)
+      when
+
+      # 正しく認識できなかった場合(優先度10)
+      else
+
+    end
+
+  end
+
+  # PUT 呼び出しを受けた際の処理
+  def status_change(message)
   end
 
 end
