@@ -17,24 +17,23 @@ class Client
   end
 
   # URI生成
-  def create_uri(target)
-    URI.parse(target)
+  def create_uri(url)
+    URI.parse(url)
   end
 
   # リクエスト生成
   def create_request(url = nil, method = nil)
-    url ||= @url
-    uri = create_uri(url)
+    uri ||= create_uri(@url)
     request = nil
     case method
       when "GET"
-        request = Net::HTTP::GET.new(uri.request_uri)
+        request = Net::HTTP::Get.new(uri.request_uri)
       when "PUT"
-        request = Net::HTTP::PUT.new(uri.request_uri)
+        request = Net::HTTP::Put.new(uri.request_uri)
       when "POST"
-        request = Net::HTTP::POST.new(uri.request_uri)
+        request = Net::HTTP::Post.new(uri.request_uri)
       else
-        request = Net::HTTP::GET.new(uri.request_uri)
+        request = Net::HTTP::Get.new(uri.request_uri)
     end
     return request
   end
@@ -47,33 +46,33 @@ class Client
     request.body = message.to_msgpack if message
     response = nil
     response = Net::HTTP.start(uri.host, port){|http|
-      http.get(request)
+      http.request(request)
     }
     return response
   end
 
   # POST リクエスト送信
-  def post(target, message)
+  def post(target, port = nil, message)
     uri = create_uri(target)
     request = create_request(uri, "POST")
     port ||= @port
-    request.body = message.to_msgpack if message
+    request.body = message.to_msgpack
     response = nil
     response = Net::HTTP.start(uri.host, port){|http|
-      http.post(request)
+      http.request(request)
     }
     return response
   end
 
   # PUT リクエスト送信
-  def put(target, message)
+  def put(target, port = nil, message)
     uri = create_uri(target)
     request = create_request(uri, "PUT")
     port ||= @port
     request.body = message.to_msgpack if message
     response = nil
     response = Net::HTTP.start(uri.host, port){|http|
-      http.put(request)
+      http.request(request)
     }
     return response
   end

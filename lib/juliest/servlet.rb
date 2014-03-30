@@ -154,19 +154,21 @@ class Juliest::Servlet
         body<< 'bad request'.to_msgpack
       end
       
-      case request.method
+      case 
         # GET メソッドの場合、サーブレットのステータスを返す
-        when 'GET'
+        when request.get?
           body<< @status.to_msgpack
 
         # PUT メソッドの場合、サーブレットのステータス変更を実行する
-        when 'PUT'
-          @status = MessagePack.unpack(request.body)
+        when request.put?
+          message = MessagePack.unpack(request.body)
+          message = message[1..-1].to_s
+          @status = message.to_sym
           @juliest.status_change(@status)
           body<< true.to_msgpack
 
         # POST メソッドの場合、 Juliest 内部処理を行うへ転送する
-        when 'POST'
+        when request.post?
           message = request.body
           @juliest.main(message)
       end

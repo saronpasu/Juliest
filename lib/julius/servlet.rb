@@ -70,7 +70,7 @@ class Julius::Servlet
     request = Net::HTTP::Post.new(uri.request_uri)
     request.body= message
     response = Net::HTTP.start(host, port){|http|
-      http.post(request)
+      http.request(request)
     }
     
     @status = :running
@@ -97,36 +97,41 @@ class Julius::Servlet
         body<< 'bad request'.to_msgpack
       end
       
-      case request.method
+      case 
         # GET メソッドの場合、サーブレットのステータスを返す
-        when 'GET'
+        when request.get?
           body<< @status.to_msgpack
 
         # PUT メソッドの場合。かつ、 サイレントモードの場合は
         # PAUSE と RESUME のステータス変更は受け付けない
-        when 'PUT', @status.eql?(:silent)
+        when request.put? && @status.eql?(:silent)
 
           case MessagePack.unpack(request.body)
-            when :pause, :resume
+            when "pause", "resume"
               status = 503
               body<< @status.to_msgpack
             else
-              @status = MessagePack.unpack(request.body)
+              message = MessagePack.unpack(request.body)
+              message = message[1..-1].to_s
+              @status = message.to_sym
           end
 
         # PUT メソッドの場合、サーブレットのステータス変更を実行する
-        when 'PUT'
-          @status = MessagePack.unpack(request.body)
+        when request.put?
+          message = MessagePack.unpack(request.body)
+          message = message[1..-1].to_s
+          @status = message.to_sym
+
           body<< true.to_msgpack
 
         # POST メソッドの場合。かつ、サイレントモードの場合は
         # Juliest サーブレットへの転送を行わない
-        when 'POST', @status.eql?(:silent)
+        when request.post? && @status.eql?(:silent)
           status = 503
           body<< @status.to_msgpack
 
         # POST メソッドの場合、 Juliest サーブレットへ転送する
-        when 'POST'
+        when request.post?
           message = request.body
           post_juliest(request.body)
       end

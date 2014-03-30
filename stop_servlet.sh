@@ -4,17 +4,10 @@ echo "stop servlet ... "
 
 
 #AQUESTALK2_SVR_PID
-echo "get AQUESTALK2_SVR_PID"
-ps a|grep aquestalk2_servlet.ru |grep Sl|awk '{ print $1; }'>>pids
-#JULIUS_SVR_PID
-echo "get JULIUS_SVR_PID"
-ps a|grep julius_servlet.ru |grep Sl|awk '{ print $1; }'>>pids
-#JULIEST_SVR_PID
-echo "get JULIEST_SVR_PID"
-ps a|grep juliest_servlet.ru |grep Sl|awk '{ print $1; }'>>pids
-#JULIUS_MOD_PID
-echo "get JULIUS_MOD_PID"
-ps a|grep julius |grep main|awk '{ print $1; }'>>pids
+echo "get SVR_PID"
+ps a|grep servlet.ru |grep Sl|awk '{ print $1; }'>>pids
+ps a|grep julius_client |grep Sl|awk '{ print $1; }'>>pids
+ps a|grep julius |grep S|awk '{ print $1; }'>>pids
 
 #cat pids
 

@@ -116,7 +116,7 @@ class Juliest
   def parse(input)
     mode_command_pattern = generate_mode_command_parser
     persona_call_pattern = generate_persona_call_parser
-    command_patterns = plugins.map.do |plugin|
+    command_patterns = plugins.map do |plugin|
       {plugin.name => generate_command_parser(plugin.command_pattern)}
     end
     
@@ -140,10 +140,12 @@ class Juliest
       when mode_command_pattern
       # 仮想人格が呼ばれた場合
       when persona_call_pattern
+
         # プラグイン毎にパースし、呼び出されたコマンドを選択する
         command = command_patterns.find do |command|
           command[:pattern].match(input)
         end
+
       if command then
         # コマンドが認識できた場合、コマンドを実行する
         execute_plugin_command
@@ -159,13 +161,16 @@ class Juliest
         ]
         messages = generate_persona_messages(source)
         messages.compact.uniq!
+
         messages.each do |message|
           play_voice(message)
         end
+
       end
+
     end
-    
   end
+
 
   # プラグインコマンドを実行する
   def execute_plugin_command
@@ -182,10 +187,10 @@ class Juliest
     # 無応答または、 :running 以外の場合は待機してリトライ。 Kernel#sleep(sec) を使用する。
   end
 
-
   # POST 呼び出しを受けた際の処理
   def main(message)
     
+=begin TODO: fix syntax error
     case message
       # 対話モード時の引数受取(優先度0）
       when
@@ -203,6 +208,7 @@ class Juliest
       else
 
     end
+=end
 
   end
 

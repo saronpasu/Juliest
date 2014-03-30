@@ -168,7 +168,7 @@ class AqKanji2Koe
 
     release(handler)
 
-    unless output then
+    if output then
       open(output, 'w+b'){|f|f.print(koe)}
       return true
     else

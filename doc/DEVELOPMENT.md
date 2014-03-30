@@ -24,6 +24,7 @@
 * AquesTalk2 音声合成ライブラリ
 * AqKanji2Koe 漢字含むテキストの音声記号変換ライブラリ
 * Rack Webサーブレット
+* Puma Webサーブレット
 * MessagePack ライブラリ
 * Julius ラッパーライブラリ
 

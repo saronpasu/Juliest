@@ -1,12 +1,6 @@
+#!/bin/ruby
+#-*- encoding: utf-8 -*-
 $LOAD_PATH << 'lib'
-require 'rack'
-require 'julius'
-require 'julius/servlet'
-
-map "/julius" do
-  use Rack::Static, :root => "resource"
-  run Julius::Servlet::App.new
-end
 
 
 require 'net/http'

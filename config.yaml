@@ -21,7 +21,7 @@
     9292
   :base_path:
     # ベースパスを指定
-    'aquestalk'
+    'aquestalk2'
   :player:
     # 使用するCUI 音楽プレイヤーを指定
     'mplayer'

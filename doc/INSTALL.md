@@ -25,6 +25,11 @@
 * サーブレット開始/終了スクリプトの実行権限を変更
     * $ chmod +x startup_servlet.sh
     * $ chmod +x stop_servlet.sh
+* MessagePack インストール
+    * $ gem install msgpack
+* Puma インストール
+    * $ gem install puma
+
 
 ### 安定版
 

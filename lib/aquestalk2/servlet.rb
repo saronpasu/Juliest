@@ -63,7 +63,7 @@ class AquesTalk2::Servlet
       base_path ||= 'aquestalk2'
       @base_path = base_path
       # CUI 音楽プレイヤーの設定
-      player ||= @config[:mplayer]
+      @player ||= @config[:player]
       # AquesTalk2 インスタンスの生成
       @aquestalk2 = AquesTalk2.new
       # AqKanji2Koe インスタンスの生成
@@ -71,50 +71,51 @@ class AquesTalk2::Servlet
       # サーブレットのステータス設定
       @status ||= :running
     end
-  end
 
-  # AquesTalk2 の実行
-  def synthe(input)
-    @status = :synthe
+    # AquesTalk2 の実行
+    def synthe(input)
+      @status = :synthe
+  
+      source = MessagePack.unpack(input)
+      source = source[3...-1]
+      uid = source.object_id
+      source = @aqkanji2koe.convert(source)
+      output = SOUND_RESOURCE_DIR+'/output-'+uid.to_s+'.wav'
+      @aquestalk2.synthe(source, output)
 
-    source = MessagePack.unpack(input)
-    uid = source.object_id
-    source = @aqkanji2koe.convert(source)
-    output = SOUND_RESOURCE_DIR+'/output-'+uid+'.wav'
-    @aquestalk2.synthe(source, output)
+      @status = :running
+      return output
+    end
 
-    @status = :running
-    return output
-  end
+    # CUI音楽プレイヤーで再生
+    def play_sound(input)
+      @status = :play_sound
 
-  # CUI音楽プレイヤーで再生
-  def play_sound(input)
-    @status = :play_sound
+      commands = ''
+      commands += @player + ' '
+      commands += @player_args if @player_args
+      commands += input
+      `#{commands}`
+      FileUtils.remove input if FileTest.exist?(input)
 
-    commands = ''
-    commands += @player + ' '
-    commands += @player_args
-    commands += input
-    `#{commands}`
-    FileUtils.remove input if FileTest.exist?(input)
+      @status = :runnning
+    end
 
-    @status = :runnning
-  end
+    # Julius サーブレットへのステータス変更信号の送信
+    def put_status_to_julius(status)
+      julius = nil
+      open(CONFIG_FILE, 'r'){|f|julius = YAML::load(f.read)[:julius]}
 
-  # Julius サーブレットへのステータス変更信号の送信
-  def put_sttus_to_julius(status)
-    julius = nil
-    open(CONFIG_FILE, 'r'){|f|julius = YAML::load(f.read)[:julius]}
-
-    host = '127.0.0.1'
-    base_path = julius[:base_path]
-    port = julius[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
-    request = Net::HTTP::Put.new(uri.request_uri)
-    request.body= status
-    response = Net::HTTP.start(host, port){|http|
-      http.put(request)
-    }
+      host = '127.0.0.1'
+      base_path = julius[:base_path]
+      port = julius[:port]
+      uri = URI.parse('http://'+host+'/'+base_path)
+      request = Net::HTTP::Put.new(uri.request_uri)
+      request.body= status
+      response = Net::HTTP.start(host, port){|http|
+        http.request(request)
+      }
+    end
   end
   
   # サーブレットクラス
@@ -137,30 +138,30 @@ class AquesTalk2::Servlet
         body<< 'bad request'.to_msgpack
       end
       
-      case request.method
+      case
         # GETメソッドの場合、サーブレットのステータスを返す
-        when 'GET'
+        when request.get?
           body<< @status.to_msgpack
 
         # PUT メソッドの場合、サーブレットのステータスを変更する
-        when 'PUT'
+        when request.put?
           @status = MessagePack.unpack(request.body)
           body<< true.to_msgpack
 
         # POST メソッドの場合、かつ。 サーブレットのステータスがサイレントモードの場合は
         # POST メソッドによる命令実行は行わない。
-        when 'POST', @status.eql?(:silent)
-          @status = 503
-          body<< @status.to_unpack
+        when request.post? && @status.eql?(:silent)
+          status = 503
+          body<< @status.to_msgpack
 
         # POST メソッドの場合、 Aqestalk2による音声合成と、CUI音楽プレイヤーによる再生を実行
-        when 'POST'
+        when request.post?
           
-          put_status_to_julius(:silent)
+          put_status_to_julius('silent')
           input = request.body
           voice = synthe(input)
           play_sound(voice)
-          put_status_to_julius(:running)
+          put_status_to_julius('running')
           
           body<< true.to_msgpack
       end
