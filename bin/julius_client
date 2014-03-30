@@ -6,6 +6,7 @@ $LOAD_PATH << 'lib'
 require 'net/http'
 require 'uri'
 require 'msgpack'
+require 'yaml'
 
 require 'julius'
 
@@ -18,11 +19,11 @@ def post_julius(message)
   host = '127.0.0.1'
   base_path = julius[:base_path]
   port = julius[:port]
-  request_uri = URI.parse('http://'+host+'/'+base_path)
+  uri = URI.parse('http://'+host+'/'+base_path)
   request = Net::HTTP::Post.new(uri.request_uri)
   request.body= message
   response = Net::HTTP.start(host, port){|http|
-    http.post(request)
+    http.request(request)
   }
 end
 
@@ -41,10 +42,6 @@ def put_julius(status)
   }
 end
 
-julius_module_command = 'julius/bin/julius -C julius/main.jconf -C julius/am-dnn.jconf -input mic -module &'
-
-`#{julius_module_command}`
-
 julius = Julius.new
 julius.each_message do |message, prompt|
   if prompt.pause then
@@ -53,7 +50,8 @@ julius.each_message do |message, prompt|
   end
   case message.name
   when :RECOGOUT
-    post_julius(message.to_msgpack)
+    # post_julius(message.to_msgpack)
+    post_julius(message.sentence)
     # puts message.inspect
     # puts message.sentence
   end

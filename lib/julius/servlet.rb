@@ -57,24 +57,24 @@ class Julius::Servlet
       # サーブレットのステータスの設定
       @status ||= :running
     end
-  end
 
-  # Juliest サーブレットへの POST 実行
-  def post_juliest(message)
-    @status = :relational
+    # Juliest サーブレットへの POST 実行
+    def post_juliest(message)
+      @status = :relational
+      
+      host = '127.0.0.1'
+      base_path = @juliest[:base_path] # TODO: bugfix
+      port = @juliest[:port]
+      request_uri = URI.parse('http://'+host+'/'+base_path)
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body= message
+      response = Net::HTTP.start(host, port){|http|
+        http.request(request)
+      }
     
-    host = '127.0.0.1'
-    base_path = @juliest[:base_path]
-    port = @juliest[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body= message
-    response = Net::HTTP.start(host, port){|http|
-      http.request(request)
-    }
-    
-    @status = :running
-    return response
+      @status = :running
+      return response
+    end
   end
 
   # サーブレットクラス
