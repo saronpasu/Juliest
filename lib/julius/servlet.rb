@@ -34,6 +34,7 @@ class Julius::Servlet
     def initialize
       # 設定ファイルの読み込み
       open(CONFIG_FILE, 'r'){|f|@config = YAML::load(f.read)[:julius]}
+      open(CONFIG_FILE, 'r'){|f|@juliest = YAML::load(f.read)[:juliest]}
       # ログの初期化
       if FileTest.exist?(LOG_DIR) then
         file = LOG_DIR+'/julius_servlet.log'
@@ -52,7 +53,6 @@ class Julius::Servlet
       # パスの設定
       base_path ||= @config[:base_path]
       base_path ||= 'julius'
-      @juliest ||= @config[:juliest]
       @base_path = base_path
       # サーブレットのステータスの設定
       @status ||= :running
@@ -63,9 +63,9 @@ class Julius::Servlet
       @status = :relational
       
       host = '127.0.0.1'
-      base_path = @juliest[:base_path] # TODO: bugfix
+      base_path = @juliest[:base_path]
       port = @juliest[:port]
-      request_uri = URI.parse('http://'+host+'/'+base_path)
+      uri = URI.parse('http://'+host+'/'+base_path)
       request = Net::HTTP::Post.new(uri.request_uri)
       request.body= message
       response = Net::HTTP.start(host, port){|http|

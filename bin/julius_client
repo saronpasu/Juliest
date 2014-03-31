@@ -50,10 +50,10 @@ julius.each_message do |message, prompt|
   end
   case message.name
   when :RECOGOUT
-    # post_julius(message.to_msgpack)
-    post_julius(message.sentence)
-    # puts message.inspect
-    # puts message.sentence
+    # post_julius(message.to_msgpack) unless message.sentence.size.eql?(1)
+    post_julius(message.sentence) unless message.sentence.size.eql?(1)
+    # puts message.inspect unless message.sentence.size.eql?(1)
+    # puts message.sentence unless message.sentence.size.eql?(1)
   end
   if prompt.resume then
     status = :resume.to_msgpack
