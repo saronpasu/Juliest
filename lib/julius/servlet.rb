@@ -67,7 +67,8 @@ class Julius::Servlet
       port = @juliest[:port]
       uri = URI.parse('http://'+host+'/'+base_path)
       request = Net::HTTP::Post.new(uri.request_uri)
-      request.body= message
+      request.body = message
+p request.inspect
       response = Net::HTTP.start(host, port){|http|
         http.request(request)
       }
@@ -132,8 +133,8 @@ class Julius::Servlet
 
         # POST メソッドの場合、 Juliest サーブレットへ転送する
         when request.post?
-          message = request.body
-          post_juliest(request.body)
+          message = request.body.read.to_msgpack
+          post_juliest(message)
       end
       
       # レスポンスを返す

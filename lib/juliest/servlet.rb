@@ -169,7 +169,7 @@ class Juliest::Servlet
 
         # POST メソッドの場合、 Juliest 内部処理を行うへ転送する
         when request.post?
-          message = request.body
+          message = request.body.read.to_msgpack
           @juliest.main(message)
       end
       
