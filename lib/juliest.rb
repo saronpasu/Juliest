@@ -147,30 +147,44 @@ class Juliest
         end
 
       if command then
-        # コマンドが認識できた場合、コマンドを実行する
-        execute_plugin_command
+        # コマンドが認識できた場合、確認メッセージの再生を行う
+        result = plugin_confirm_message(command)
+        if result then
+          # 確認メッセージが認証できた場合、コマンドを実行する
+          execute_plugin_command
+        else
+          # 確認メッセージが認証できない場合、再入力を願い出る
+          re_input_message
+        end
       else
         # コマンドが認識できなかった場合、メッセージ再生のみを行う
-        source = [
-          ":__prefix_ask_to__",
-          ":__ask_to__",
-          ":__suffix_ask_to__",
-          ":__prefix_re_input__",
-          ":__re_input__",
-          ":__suffix_re_input__"
-        ]
-        messages = generate_persona_messages(source)
-        messages.compact.uniq!
-
-        messages.each do |message|
-          play_voice(message)
-        end
+        re_input_message
 
       end
 
     end
   end
 
+  def re_input_message
+    source = [
+      ":__prefix_ask_to__",
+      ":__ask_to__",
+      ":__suffix_ask_to__",
+      ":__prefix_re_input__",
+      ":__re_input__",
+      ":__suffix_re_input__"
+    ]
+    messages = generate_persona_messages(source)
+    messages.compact.uniq!
+
+    messages.each do |message|
+      play_voice(message)
+    end
+
+  end
+
+  def plugin_confirm_message(plugin)
+  end
 
   # プラグインコマンドを実行する
   def execute_plugin_command
@@ -189,28 +203,14 @@ class Juliest
 
   # POST 呼び出しを受けた際の処理
   def main(message)
-    
-=begin TODO: fix syntax error
-    case message
-      # 対話モード時の引数受取(優先度0）
-      when
 
-      # モード変更コマンド(優先度1)
-      when
-
-      # プラグインコマンド(優先度2)
-      when
-
-      # 名前呼び出し(優先度3)
-      # コマンドなしで名前のみ呼ばれた場合、対話モードにするか聞き返しにする。
-      when
-
-      # 正しく認識できなかった場合(優先度10)
-      # 誤認識が多いので、何もしない。
-      else
-
-    end
-=end
+    # 対話モード
+    #   プラグインコマンドチェック
+    #   true -> 確認
+    #   false -> 聞き返し
+    # 名前呼び出しチェック
+    #   true -> 対話モード
+    #   false -> 何もしない
 
   end
 
