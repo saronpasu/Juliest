@@ -48,11 +48,14 @@ julius.each_message do |message, prompt|
     status = :pause.to_msgpack
     put_julius(status)
   end
+  next if message.nil?
   case message.name
   when :RECOGOUT
     # post_julius(message.to_msgpack) unless message.sentence.size.eql?(1)
     post_julius(message.sentence) unless message.sentence.size.eql?(1)
+    # 詳細出力
     # puts message.inspect unless message.sentence.size.eql?(1)
+    # 簡易出力
     # puts message.sentence unless message.sentence.size.eql?(1)
   end
   if prompt.resume then

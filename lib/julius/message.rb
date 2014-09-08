@@ -99,9 +99,15 @@ class Julius
 
     def self.init(xml)
       document = REXML::Document.new(xml.gsub(/<(\/?)s>/){ "&lt;#{$1}s&gt;" })
-      eval(document.root.name.capitalize).new(document.root)
+#p document.to_s
+#p document.root.nil?
+      unless document.root.nil? then
+        eval(document.root.name.capitalize).new(document.root)
+      end
     rescue NameError
-      raise ElementError, "invalid XML element found: #{document.root.name}"
+      unless document.root.nil? then
+        raise ElementError, "invalid XML element found: #{document.root.name}"
+      end
     end
 
     def initialize(element)

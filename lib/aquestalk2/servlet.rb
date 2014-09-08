@@ -77,7 +77,7 @@ class AquesTalk2::Servlet
       @status = :synthe
   
       source = MessagePack.unpack(input)
-      source = source[3...-1]
+      # source = source[3...-1]
       uid = source.object_id
       source = @aqkanji2koe.convert(source)
       output = SOUND_RESOURCE_DIR+'/output-'+uid.to_s+'.wav'
@@ -158,7 +158,7 @@ class AquesTalk2::Servlet
         when request.post?
           
           put_status_to_julius('silent')
-          input = request.body
+          input = MessagePack.unpack(request.body)
           voice = synthe(input)
           play_sound(voice)
           put_status_to_julius('running')

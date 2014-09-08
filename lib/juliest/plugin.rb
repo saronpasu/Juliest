@@ -1,6 +1,8 @@
 require 'julius'
 require 'msgpack'
 
+class Juliest::Plugin; end
+
 # プラグインのベースクラス。各種プラグインはこのクラスを継承すること。
 class Juliest::Plugin::Base
 
@@ -79,6 +81,11 @@ end
 
 # プラグイン管理クラス
 class Juliest::PluginManager
+  # プラグインのパス
+  PLUGINS_PATH = './plugins/'
+  # 仮想人格のパス
+  PERSONA_PATH = './persona/'
+
   # 読み込まれているプラグインの一覧
   attr_accessor :plugins
 
@@ -88,7 +95,7 @@ class Juliest::PluginManager
 
   # プラグインの読み込み
   def load_plugin(plugin)
-    
+    load(PLUGINS_PATH + '/' + plugin + '.rb')
   end
 
   # プラグインを一覧へ追加

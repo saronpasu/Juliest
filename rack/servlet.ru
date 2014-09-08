@@ -16,7 +16,7 @@ map "/julius" do
   run Julius::Servlet::App.new
 end
 
-__END__
+#__END__
 require 'juliest'
 require 'juliest/servlet'
 

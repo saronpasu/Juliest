@@ -68,7 +68,7 @@ class Julius::Servlet
       uri = URI.parse('http://'+host+'/'+base_path)
       request = Net::HTTP::Post.new(uri.request_uri)
       request.body = message
-p request.inspect
+#p request.inspect
       response = Net::HTTP.start(host, port){|http|
         http.request(request)
       }

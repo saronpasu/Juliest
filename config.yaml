@@ -31,3 +31,6 @@
     # 使用するペルソナを指定
     :est
 
+:plugins:
+  - :say_hello
+
