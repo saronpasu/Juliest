@@ -76,12 +76,19 @@ class AquesTalk2::Servlet
     def synthe(input)
       @status = :synthe
   
-      source = MessagePack.unpack(input)
+      # source = MessagePack.unpack(input)
       # source = source[3...-1]
+      source = input
       uid = source.object_id
       source = @aqkanji2koe.convert(source)
+
+      @aqkanji2koe = AqKanji2Koe.new
+
       output = SOUND_RESOURCE_DIR+'/output-'+uid.to_s+'.wav'
       @aquestalk2.synthe(source, output)
+
+      # @aquestalk2 = AquesTalk2.new
+
 
       @status = :running
       return output
@@ -98,7 +105,7 @@ class AquesTalk2::Servlet
       `#{commands}`
       FileUtils.remove input if FileTest.exist?(input)
 
-      @status = :runnning
+      @status = :running
     end
 
     # Julius サーブレットへのステータス変更信号の送信
@@ -111,7 +118,7 @@ class AquesTalk2::Servlet
       port = julius[:port]
       uri = URI.parse('http://'+host+'/'+base_path)
       request = Net::HTTP::Put.new(uri.request_uri)
-      request.body= status
+      request.body= status.to_msgpack
       response = Net::HTTP.start(host, port){|http|
         http.request(request)
       }
@@ -159,6 +166,7 @@ class AquesTalk2::Servlet
           
           put_status_to_julius('silent')
           input = MessagePack.unpack(request.body)
+          input = input[3...-1] if input[0].eql?("\xDA")
           voice = synthe(input)
           play_sound(voice)
           put_status_to_julius('running')

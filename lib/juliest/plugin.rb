@@ -20,7 +20,9 @@ class Juliest::Plugin::Base
     # ユーザデータ(Juliestより受け取る)
     :user_data,
     # 仮想人格データ(Juliestより受け取る)
-    :activate_persona
+    :activate_persona,
+    # Juliest インスタンス
+    :juliest
   )
 
   # 初期化

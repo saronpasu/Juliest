@@ -1,5 +1,5 @@
 ---
-:plugin: "say_hello"
+:name: "say_hello"
 :class: "Say_Hello"
 :pattern: "(おはよう|こんにちは|こんばんは)"
 

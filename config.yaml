@@ -27,9 +27,7 @@
     'mplayer'
 
 :persona:
-  :use:
-    # 使用するペルソナを指定
-    :est
+  - :est
 
 :plugins:
   - :say_hello

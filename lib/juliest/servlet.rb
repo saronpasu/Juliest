@@ -71,11 +71,11 @@ class Juliest::Servlet
     host = '127.0.0.1'
     base_path = @aquestalk2[:base_path]
     port = @aquestalk2[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
+    uri = URI.parse('http://'+host+'/'+base_path)
     request = Net::HTTP::Post.new(uri.request_uri)
     request.body= message
     response = Net::HTTP.start(host, port){|http|
-      http.post(request)
+      http.request(request)
     }
     
     @status = :running
@@ -89,10 +89,10 @@ class Juliest::Servlet
     host = '127.0.0.1'
     base_path = @aquestalk2[:base_path]
     port = @aquestalk2[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
+    uri = URI.parse('http://'+host+'/'+base_path)
     request = Net::HTTP::Get.new(uri.request_uri)
     response = Net::HTTP.start(host, port){|http|
-      http.get(request)
+      http.request(request)
     }
     
     @status = :running
@@ -106,11 +106,11 @@ class Juliest::Servlet
     host = '127.0.0.1'
     base_path = @julius[:base_path]
     port = @julius[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
+    uri = URI.parse('http://'+host+'/'+base_path)
     request = Net::HTTP::Put.new(uri.request_uri)
     request.body= message
     response = Net::HTTP.start(host, port){|http|
-      http.put(request)
+      http.request(request)
     }
     
     @status = :running
@@ -124,10 +124,10 @@ class Juliest::Servlet
     host = '127.0.0.1'
     base_path = @julius[:base_path]
     port = @julius[:port]
-    request_uri = URI.parse('http://'+host+'/'+base_path)
+    uri = URI.parse('http://'+host+'/'+base_path)
     request = Net::HTTP::Get.new(uri.request_uri)
     response = Net::HTTP.start(host, port){|http|
-      http.get(request)
+      http.request(request)
     }
     
     @status = :running
@@ -164,12 +164,13 @@ class Juliest::Servlet
           message = MessagePack.unpack(request.body)
           message = message[1..-1].to_s
           @status = message.to_sym
-          @juliest.status_change(@status)
+          #@juliest.status_change(@status)
           body<< true.to_msgpack
 
         # POST メソッドの場合、 Juliest 内部処理を行うへ転送する
         when request.post?
           message = request.body.read.to_msgpack
+#p :__juliest_servlet_main__
           @juliest.main(message)
       end
       

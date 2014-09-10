@@ -1,7 +1,7 @@
-require 'juliest'
 require 'juliest/plugin'
 require 'yaml'
-
+require 'time'
+require 'msgpack'
 
 # 設定の読み込み
 PLUGINS_PATH = 'plugins'
@@ -36,7 +36,19 @@ class Say_Hello < Juliest::Plugin::Base
   
   # 実行処理
   def call(args = nil)
-    
+    hello_message = "こんにちは"
+    now = Time.now
+    morning = Range.new(5,10)
+    noonish = Range.new(11,15)
+    case now.hour
+      when morning
+        hello_message = "おはよう"
+      when noonish
+        hello_message = "こんにちわ"
+      else
+        hello_message = "こんばんわ"
+    end
+    @juliest.play_voice(hello_message.to_msgpack)
   end
 end
 
