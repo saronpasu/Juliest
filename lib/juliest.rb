@@ -26,7 +26,9 @@ class Juliest
     # Juliest
     :juliest,
     # base path
-    :base_path
+    :base_path,
+    # confirm_flag
+    :confirm_flag
   )
   
   # 初期設定:AquesTalk2 サーブレットへの応答待機時間(秒)
@@ -60,7 +62,7 @@ class Juliest
 
   # parser/common_words.yaml のロード
   def load_parser_common_words(path = PARSER_COMMON_WORDS_PATH)
-    # @parser_common_words = open(path, 'r'){|f|YAML::load(f.read)}
+    @parser_common_words = open(path, 'r'){|f|YAML::load(f.read)}
   end
 
   # 仮想人格リストのロード
@@ -70,11 +72,12 @@ class Juliest
     list.each do |persona|
       # 仮想人格の個別ロード
       persona_data = Hash.allocate
+      persona_data[persona] = Hash.allocate
       open(PERSONA_PATH + persona.to_s + '/persona.yaml', 'r'){|f|
-        persona_data[persona] = {:persona => YAML::load(f.read)}
+        persona_data[persona][:persona] = YAML::load(f.read)
       }
       open(PERSONA_PATH + persona.to_s + '/word.yaml', 'r'){|f|
-        persona_data[persona] = {:word => YAML::load(f.read)}
+        persona_data[persona][:word] = YAML::load(f.read)
       }
       result.push(persona_data)
     end
@@ -135,6 +138,13 @@ class Juliest
   def generate_dialog_parser
   end
 
+  # 確認メッセージのパーサ生成
+  def generate_confirm_parser
+    yes_pattern = Regexp.new(@parser_common_words["__confirm_yes__"])
+    no_pattern = Regexp.new(@parser_common_words["__confirm_no__"])
+    return [yes_pattern, no_pattern]
+  end
+
   # コマンドパーサを生成(プラグイン毎)
   def generate_command_parser(pattern)
     Regexp.new(pattern)
@@ -177,9 +187,18 @@ class Juliest
       when :silent
         
       # 対話モード時には引数受信の処理を行う
-      when :dialog
-        
     end
+
+    # 確認モード
+    if @confirm_flag.eql?(:confirm) then
+      if input then
+        # 確認メッセージのパース
+        confirm_pattern = generate_confirm_pattern
+        @confirm_flag = true if input =~ confirm_pattern.first
+        @confirm_flag = false if input =~ confirm_pattern.last
+      end
+    end
+
     
     # 通常処理
     case input
@@ -204,12 +223,12 @@ class Juliest
 
   def re_input_message
     source = [
-      ":__prefix_ask_to__",
-      ":__ask_to__",
-      ":__suffix_ask_to__",
-      ":__prefix_re_input__",
-      ":__re_input__",
-      ":__suffix_re_input__"
+      "__prefix_ask_to__",
+      "__ask_to__",
+      "__suffix_ask_to__",
+      "__prefix_re_input__",
+      "__re_input__",
+      "__suffix_re_input__"
     ]
     messages = generate_persona_messages(source)
     messages.compact.uniq!
@@ -220,7 +239,17 @@ class Juliest
 
   end
 
-  def plugin_confirm_message(plugin)
+  def confirm_message
+    source = [
+      "__confirm__"
+    ]
+    messages = generate_persona_messages(source)
+    messages.compact.uniq!
+
+    messages.each do |message|
+      play_voice(message)
+    end
+　　　　
   end
 
   # プラグインコマンドを実行する
@@ -230,9 +259,35 @@ class Juliest
     plugin.call
   end
 
+  def get_activate_persona
+    # アクティブなペルソナのデータを取得
+    activate_persona = @persona.find do |persona|
+      persona.keys.first.eql?(@activate_persona.to_sym)
+    end
+    return activate_persona[@activate_persona.to_sym]
+  end
+
   # 仮想人格のメッセージ生成(array to array)
   def generate_persona_messages(source)
-    
+    # アクティブなペルソナのデータを取得
+    activate_persona = get_activate_persona
+    # ワードリストを取得
+    words = activate_persona[:word][:word]
+    # メッセージの置換を行う
+    result = Array.allocate
+    source.each do |src|
+      match_word = nil
+      match_word = words.find do |key, word|
+         src.eql?(key)
+      end
+      if match_word then
+        result.push(match_word.last)
+      else
+        result.push(src)
+      end
+    end
+    # 生成されたメッセージを返す
+    return result
   end
 
   # Juliest サーブレットへの PUT 実行
@@ -340,8 +395,6 @@ class Juliest
       response = get_aquestalk2
       status = MessagePack.unpack(response.body).to_sym
       sleep wait_sec
-p status
-p count
       count -= 1
       exit if count.zero?
       break if status == :running
@@ -354,6 +407,7 @@ p count
   def main(message)
 
 #p :__juliest_main__
+#p self.inspect
     input = MessagePack.unpack(message)
     parse(input[1...-1])
 

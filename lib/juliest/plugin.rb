@@ -7,6 +7,8 @@ class Juliest::Plugin; end
 class Juliest::Plugin::Base
 
   attr_accessor(
+    # プラグインの名称
+    :plugin_name,
     # プラグインバージョン
     :version,
     # プラグインの製作者
@@ -34,6 +36,16 @@ class Juliest::Plugin::Base
   # このプラグインはペルソナによる対応が必須であるか
   def require_persona_support?
     @requirement[:persona_support]
+  end
+
+  # このプラグインをペルソナはサポートしているか
+  def persona_supported?
+    persona = @juliest.get_activate_persona
+    result = nil
+    result = persona[:persona][:persona][:support_plugins].find do |plugin|
+      @plugin_name.eql?(plugin)
+    end
+    return !!result
   end
 
   # このプラグインは引数の要求を必要とするか

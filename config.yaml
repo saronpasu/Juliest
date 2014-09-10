@@ -28,7 +28,9 @@
 
 :persona:
   - :est
+# - :juiz
 
 :plugins:
   - :say_hello
+  - :ask_aboutme
 
