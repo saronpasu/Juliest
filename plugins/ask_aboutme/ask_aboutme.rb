@@ -1,12 +1,11 @@
 require 'juliest/plugin'
 require 'yaml'
-require 'time'
 require 'msgpack'
 
 # 設定の読み込み
-PLUGINS_PATH = 'plugins'
+plugins_path = 'plugins'
 plugin_data = nil
-open(PLUGINS_PATH + '/say_hello.yaml', 'r'){|f|
+open(plugins_path + '/say_hello.yaml', 'r'){|f|
   plugin_data = YAML::load(f.read)
 }
 
@@ -59,6 +58,36 @@ class Ask_Aboutme < Juliest::Plugin::Base
     unless persona_supported? then
       # ペルソナが非対応
       return false
+    end
+
+    # 確認メッセージの有無で処理分岐
+    case @juliest.confirm_flag
+      # 確認メッセージが YES の場合
+      when "true"
+        @juliest.data_write(:confirm_flag, "nil")
+        @juliest.data_write(:running_plugin, "nil")
+      # 確認メッセージが NO の場合
+      when "false"
+        @juliest.data_write(:confirm_flag, "nil")
+        @juliest.data_write(:running_plugin, "nil")
+        message = "自己紹介を中止します。"
+        @juliest.play_voice(message.to_msgpack)
+        return :confirm_false
+      # 確認モードでない場合
+      else
+        @juliest.data_write(:confirm_flag, "confirm")
+        @juliest.data_write(:running_plugin, "Ask_Aboutme")
+        confirm_message = [
+          "自己紹介をします。",
+          "__confirm__"
+        ]
+        confirm_message = @juliest.generate_persona_messages(
+          confirm_message
+        )
+        confirm_message.each do |message|
+          @juliest.play_voice(message.to_msgpack)
+        end
+        return :confirm
     end
 
     # 自己紹介のテキストをロード

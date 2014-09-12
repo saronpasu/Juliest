@@ -33,4 +33,5 @@
 :plugins:
   - :say_hello
   - :ask_aboutme
+  - :ask_time
 

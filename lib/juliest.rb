@@ -28,7 +28,9 @@ class Juliest
     # base path
     :base_path,
     # confirm_flag
-    :confirm_flag
+    :confirm_flag,
+    # running_plugin
+    :running_plugin
   )
   
   # 初期設定:AquesTalk2 サーブレットへの応答待機時間(秒)
@@ -44,6 +46,9 @@ class Juliest
 
   # パーサー用共通ワードのパス
   PARSER_COMMON_WORDS_PATH = './parser/common_words.yaml'
+  # データ格納先のパス
+  DATA_PATH = './data/juliest.dat'
+
 
   # プラグインのパス
   PLUGINS_PATH = './plugins/'
@@ -113,6 +118,7 @@ class Juliest
     activate_persona ||= DEFAULT_ACTIVATE_PERSONA
     @config = load_config(config)
     @user_data ||= load_user_data(user_data)
+    @parser_common_words ||= load_parser_common_words
     @aquestalk2_wait_sec ||= DEFAULT_AQUESTALK2_WAIT_SEC
     @persona ||= load_persona
     @plugins ||= load_plugins
@@ -124,6 +130,37 @@ class Juliest
     @julius ||= @config[:julius]
     @juliest ||= @config[:juliest]
     @base_path = base_path
+  end
+
+  # データの書き込み
+  def data_write(symbol, object)
+    data = Hash.allocate
+
+    # データファイルが存在する時、データファイルを読み込む
+    if FileTest.exist?(DATA_PATH)
+      open(DATA_PATH, 'r'){|f|data = f.read}
+      data = MessagePack.unpack(data)
+    end
+
+    data[symbol] = object
+    data = data.to_msgpack
+    open(DATA_PATH, 'w+'){|f|f.print(data)}
+    return true
+  end
+
+  # データの読み込み
+  def data_read(symbol)
+    # データファイルが見つからない場合は false を返す
+    return false unless FileTest.exist?(DATA_PATH)
+
+    data = nil
+    open(DATA_PATH, 'r'){|f|data = f.read}
+    data = MessagePack.unpack(data)
+    object = data[symbol.to_s]
+    # 該当するデータが見つからない場合は false を返す
+    return false if object.nil?
+
+    return object
   end
 
   # モード変更用のパーサ生成
@@ -190,16 +227,33 @@ class Juliest
     end
 
     # 確認モード
-    if @confirm_flag.eql?(:confirm) then
+    @confirm_flag = data_read(:confirm_flag)
+#p @confirm_flag
+    if @confirm_flag.eql?("confirm") then
       if input then
         # 確認メッセージのパース
-        confirm_pattern = generate_confirm_pattern
-        @confirm_flag = true if input =~ confirm_pattern.first
-        @confirm_flag = false if input =~ confirm_pattern.last
+        confirm_pattern = generate_confirm_parser
+        if input =~ confirm_pattern.first
+#p :__yes__
+          data_write(:confirm_flag, "true")
+          @confirm_flag = "true"
+        elsif input =~ confirm_pattern.last
+#p :__no__
+          data_write(:confirm_flag, "false")
+          @confirm_flag = "false"
+        end
       end
     end
 
-    
+    # 実行中のプラグイン呼び出し
+    @running_plugin = data_read(:running_plugin)
+    case @running_plugin
+      when "nil", false
+        # nothing to do.
+      else
+        execute_plugin_command(@running_plugin)
+    end
+
     # 通常処理
     case input
       # モード切り替え(優先処理)

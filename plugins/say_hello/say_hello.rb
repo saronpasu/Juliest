@@ -4,9 +4,9 @@ require 'time'
 require 'msgpack'
 
 # 設定の読み込み
-PLUGINS_PATH = 'plugins'
+plugins_path = 'plugins'
 plugin_data = nil
-open(PLUGINS_PATH + '/say_hello.yaml', 'r'){|f|
+open(plugins_path + '/say_hello.yaml', 'r'){|f|
   plugin_data = YAML::load(f.read)
 }
 

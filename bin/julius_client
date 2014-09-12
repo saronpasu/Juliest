@@ -56,7 +56,7 @@ julius.each_message do |message, prompt|
     # 詳細出力
     # puts message.inspect unless message.sentence.size.eql?(1)
     # 簡易出力
-    # puts message.sentence unless message.sentence.size.eql?(1)
+     puts message.sentence unless message.sentence.size.eql?(1)
   end
   if prompt.resume then
     status = :resume.to_msgpack

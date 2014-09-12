@@ -1,0 +1,5 @@
+---
+:name: "ask_time"
+:class: "Ask_Time"
+:pattern: "(時刻|時間|時計|何時|なんじ)"
+

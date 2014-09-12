@@ -125,8 +125,9 @@ class AquesTalk2
     wav = result[0, size.first]
     open(output, 'w+b'){|f|f.print(wav)}
 
-
-    free_wave(wav)
+    # TODO: double free or corruption 
+    # free_wave(wav)
+    
     return true
   end
   
