@@ -47,7 +47,7 @@ module LibAqKanji2Koe
   dlload 'libstdc++.so.6'
   
   # AquesKanji2Koe 評価版(linux)
-  # dlload LIB_PATH+'/libAqKanji2KoeEva.so.2.0'
+  # dlload LIB_PATH+'/libAqKanji2Koe.so.2.0'
 
   # AquesKanji2Koe 開発用(linux)
   # このリポジトリにはライブラリは含まれません

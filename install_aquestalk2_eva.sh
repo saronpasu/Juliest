@@ -68,7 +68,7 @@ echo ''
 # copy AqKanji2Koe Eva
 cd $WORK_DIR
 mkdir dict
-cd aqk2k-lnx-eva
+cd aqk2k_lnx_eva
 cp -r aq_dic $WORK_DIR/dict/
 cp lib64/libAqKanji2Koe.so.2.0 $WORK_DIR/lib/
 
@@ -85,8 +85,8 @@ echo ''
 rm -rf aqtk2-lnx-eva
 rm -r aqtk2-lnx-eva_230.zip
 # remove tempfile AqKanji2Koe Eva
-rm -rf aqk2k-lnx-eva
-rm -r aqk2k-lnx-eva_202.zip
+rm -rf aqk2k_lnx_eva
+rm -r aqk2k_lnx_eva_202.zip
 
 echo 'done.'
 echo '=================================='

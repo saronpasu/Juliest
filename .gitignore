@@ -3,6 +3,7 @@ julius
 log
 lib/libAquesTalk2.so.2.3
 lib/libAqKanji2Koe.so.2.0
+lib/libAquesTalk2Eva.so.2.3
 data/*.dat
 data/plugins/*.dat
 dict
