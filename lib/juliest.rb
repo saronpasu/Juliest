@@ -285,10 +285,13 @@ class Juliest
       "__suffix_re_input__"
     ]
     messages = generate_persona_messages(source)
+    messages.reject! do |message|
+      message =~ /__/
+    end
     messages.compact.uniq!
 
     messages.each do |message|
-      play_voice(message)
+      play_voice(message.to_msgpack)
     end
 
   end

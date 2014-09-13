@@ -60,12 +60,16 @@ class Ask_Aboutme < Juliest::Plugin::Base
       return false
     end
 
+p @juliest.confirm_flag
+
     # 確認メッセージの有無で処理分岐
     case @juliest.confirm_flag
+
       # 確認メッセージが YES の場合
       when "true"
         @juliest.data_write(:confirm_flag, "nil")
         @juliest.data_write(:running_plugin, "nil")
+
       # 確認メッセージが NO の場合
       when "false"
         @juliest.data_write(:confirm_flag, "nil")
@@ -73,6 +77,14 @@ class Ask_Aboutme < Juliest::Plugin::Base
         message = "自己紹介を中止します。"
         @juliest.play_voice(message.to_msgpack)
         return :confirm_false
+
+      # 確認モードの場合
+      when "confirm"
+        @juliest.data_write(:confirm_flag, "confirm")
+        @juliest.data_write(:running_plugin, "Ask_Aboutme")
+        @juliest.re_input_message
+        return :confirm
+
       # 確認モードでない場合
       else
         @juliest.data_write(:confirm_flag, "confirm")
