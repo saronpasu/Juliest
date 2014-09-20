@@ -29,16 +29,16 @@ end
 
 def put_julius(status)
   julius = nil
-  open(CONFIG_FILE, 'r'){|f|julius = YAML::load(f.read)[:julius]}
+  open('config.yaml', 'r'){|f|julius = YAML::load(f.read)[:julius]}
 
   host = '127.0.0.1'
   base_path = julius[:base_path]
   port = julius[:port]
-  request_uri = URI.parse('http://'+host+'/'+base_path)
+  uri = URI.parse('http://'+host+'/'+base_path)
   request = Net::HTTP::Put.new(uri.request_uri)
   request.body= status
   response = Net::HTTP.start(host, port){|http|
-    http.put(request)
+    http.request(request)
   }
 end
 

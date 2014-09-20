@@ -13,6 +13,8 @@
     * 同社より、開発版ライセンスをお買い求め下さい。
 * このリポジトリには MPlayer は含まれていません。
     * apt-get install mplayer などで導入して下さい。
+* Ubuntu でマイク入力する際には、 libasound2-dev が必要です。
+    * apt-get libasound2-dev などで導入して下さい。
 * Ubuntu でマイク入力する際に、音が小さく、ノイズが多くてうまく認識されないことがあります。
     * GNOME ALSA Mixser を導入して、 Master ボリュームを上げて下さい。
     * apt-get gnome-alsamixer などで導入できます。

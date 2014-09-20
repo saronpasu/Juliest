@@ -92,7 +92,7 @@ echo 'done.'
 echo '=================================='
 echo ''
 
-echo 'install julius finish!'
+echo 'install AquesTalk2 finish!'
 echo '/*================================*/'
 
 

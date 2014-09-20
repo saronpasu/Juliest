@@ -55,7 +55,7 @@ echo 'configuration julius ... '
 echo ''
 
 cd julius-4.3.1
-./configure --prefix=$WORK_DIR/julius --exec-prefix=$WORK_DIR/julius --with-mictype-alsa
+./configure --prefix=$WORK_DIR/julius --exec-prefix=$WORK_DIR/julius --with-mictype=alsa
 
 echo 'done.'
 echo '=================================='
