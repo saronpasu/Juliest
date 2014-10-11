@@ -60,7 +60,7 @@ class Ask_Aboutme < Juliest::Plugin::Base
       return false
     end
 
-p @juliest.confirm_flag
+#p @juliest.confirm_flag
 
     # 確認メッセージの有無で処理分岐
     case @juliest.confirm_flag
